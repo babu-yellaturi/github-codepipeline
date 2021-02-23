@@ -1,0 +1,243 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Metadata": {
+        "AWS::CloudFormation::Designer": {
+            "a8c08e44-82d2-4a23-aa84-5b2b61efead0": {
+                "size": {
+                    "width": 150,
+                    "height": 150
+                },
+                "position": {
+                    "x": 420,
+                    "y": 90
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "44719e4f-c398-4be1-800c-adb394d7e9d2": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 330,
+                    "y": 30
+                },
+                "z": 1,
+                "embeds": [],
+                "dependson": [
+                    "a8c08e44-82d2-4a23-aa84-5b2b61efead0",
+                    "863730aa-48d8-438b-bbcf-993597317e92"
+                ]
+            },
+            "863730aa-48d8-438b-bbcf-993597317e92": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 150,
+                    "y": 30
+                },
+                "z": 1,
+                "embeds": []
+            },
+            "eee52903-e991-4473-94b0-0c95cac80ad9": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 240,
+                    "y": 150
+                },
+                "z": 1,
+                "embeds": [],
+                "isassociatedwith": [
+                    "44719e4f-c398-4be1-800c-adb394d7e9d2"
+                ],
+                "dependson": [
+                    "077a3eac-5658-44f8-8068-cecf4e6a9837",
+                    "a8c08e44-82d2-4a23-aa84-5b2b61efead0"
+                ]
+            },
+            "077a3eac-5658-44f8-8068-cecf4e6a9837": {
+                "size": {
+                    "width": 60,
+                    "height": 60
+                },
+                "position": {
+                    "x": 60,
+                    "y": 150
+                },
+                "z": 1,
+                "embeds": []
+            }
+        }
+    },
+    "Resources": {
+        "dbsubnetgrp": {
+            "Type": "AWS::RDS::DBSubnetGroup",
+            "Properties": {
+                "DBSubnetGroupDescription": "Sample DB subnet Group",
+                "DBSubnetGroupName": {
+                    "Ref": "DBSUbnetGroupName"
+                },
+                "SubnetIds": {
+                    "Ref": "SubIds"
+                },
+                "Tags": [
+                    {
+                        "Key": "Env",
+                        "Value": "Test"
+                    },
+                    {
+                        "Key": "CFN",
+                        "Value": "True"
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "a8c08e44-82d2-4a23-aa84-5b2b61efead0"
+                }
+            }
+        },
+        "RDSDB": {
+            "Type": "AWS::RDS::DBCluster",
+            "Properties": {
+                "DatabaseName": "sample",
+                "DBClusterIdentifier": {
+                    "Ref": "RDSName"
+                },
+                "DBClusterParameterGroupName": {
+                    "Ref": "RDSDBClusparam"
+                },
+                "DBSubnetGroupName": {
+                    "Ref": "dbsubnetgrp"
+                },
+                "DeletionProtection": "True",
+                "Engine": "aurora-postgresql",
+                "EngineVersion": "12.4",
+                "MasterUsername": {
+                    "Ref": "MasterUserName"
+                },
+                "MasterUserPassword": {
+                    "Ref": "Masteruserpassword"
+                },
+                "Port": {
+                    "Ref": "rdsport"
+                },
+                "StorageEncrypted": "True",
+                "Tags": [
+                    {
+                        "Key": "Env",
+                        "Value": "Test"
+                    }
+                ],
+                "VpcSecurityGroupIds": {
+                    "Ref": "RDSSG"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "44719e4f-c398-4be1-800c-adb394d7e9d2"
+                }
+            },
+            "DependsOn": [
+                "dbsubnetgrp",
+                "RDSDBClusparam"
+            ]
+        },
+        "RDSDBClusparam": {
+            "Type": "AWS::RDS::DBClusterParameterGroup",
+            "Properties": {
+                "Description": "RDS-AuroraPostgreSQL-v12-parametergroup",
+                "Family": "aurora-postgresql12",
+                "Parameters": {
+                    "ansi_constraint_trigger_ordering": 1,
+                    "apg_plan_mgmt.pgss_min_total_time_ms": 1123
+                },
+                "Tags": [
+                    {
+                        "Key": "Env",
+                        "Value": "Test"
+                    }
+                ]
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "863730aa-48d8-438b-bbcf-993597317e92"
+                }
+            }
+        },
+        "RDSDBI1": {
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "DBSubnetGroupName": {
+                    "Ref": "dbsubnetgrp"
+                },
+                "DBClusterIdentifier": {
+                    "Ref": "RDSDB"
+                },
+                "Engine": "aurora-postgresql",
+                "PubliclyAccessible": "false",
+                "DBInstanceClass": {
+                    "Ref": "RDSInstancesize"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "eee52903-e991-4473-94b0-0c95cac80ad9"
+                }
+            },
+            "DependsOn": [
+                "dbsubnetgrp",
+                "RDSDBParamI"
+            ]
+        },
+        "RDSDBParamI": {
+            "Type": "AWS::RDS::DBParameterGroup",
+            "Properties": {
+                "Description": "CloudFormation Sample Aurora Parameter Group",
+                "Family": "aurora-postgresql12",
+                "Parameters": {
+                    "apg_enable_correlated_any_transform": 1
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "077a3eac-5658-44f8-8068-cecf4e6a9837"
+                }
+            }
+        }
+    },
+    "Parameters": {
+        "DBSUbnetGroupName": {
+            "Type": "String"
+        },
+        "SubIds": {
+            "Type": "List<AWS::EC2::Subnet::Id>"
+        },
+        "RDSName": {
+            "Type": "String"
+        },
+        "rdsport": {
+            "Type": "Number"
+        },
+        "MasterUserName": {
+            "Type": "String"
+        },
+        "Masteruserpassword": {
+            "Type": "String",
+            "NoEcho": "true"
+        },
+        "RDSSG": {
+            "Type": "List<AWS::EC2::SecurityGroup::Id>"
+        },
+        "RDSInstancesize": {
+            "Type": "String",
+            "Description": "Enter a valid Instance size for the Database instance"
+        }
+    }
+}
